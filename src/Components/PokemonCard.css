@@ -1,0 +1,12 @@
+.card {
+	display: flex;
+	flex-direction: column;
+	margin: 2vw;
+	min-width: 15vw;
+}
+
+.image {
+	width: 8vw !important;
+	align-self: center;
+	height: auto;
+}

@@ -5,8 +5,17 @@
 
 .search-name {
 	font-size: 2rem;
+	margin: 1vw;
+	align-self: center;
+	width: 30vw;
 }
 
 .list-item {
 	margin: 1rem;
+}
+
+.grid {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
 }

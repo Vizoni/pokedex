@@ -1,33 +1,35 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
+import Grid from "./Components/Grid";
 
 function App() {
 	const axios = require("axios").default;
 	const baseURL = "https://pokeapi.co/api/v2/";
 
 	const [pokemons, setPokemons] = useState<any[]>([]);
-	const [myPokemon, setMyPokemon] = useState({});
 	const [searchPokemon, setSearchPokemon] = useState("");
 
 	useEffect(() => {
 		async function getPokemons() {
 			const pokemonsFromAPI = await getFirstTenPokemons();
-			setPokemons(pokemonsFromAPI.data.results);
+			pokemonsFromAPI.data.results.forEach(async (pokemon: any) => {
+				const pokemonDetails = await getPokemon(pokemon.name);
+				setTimeout(() => {
+					setPokemons((pokemons) => [...pokemons, pokemonDetails.data]);
+				}, 5000);
+			});
 		}
 		getPokemons();
 	}, []);
 
+	useEffect(() => {}, [pokemons]);
+
 	const getFirstTenPokemons = async () => {
-		return await axios.get(baseURL + "pokemon?limit=10");
+		return axios.get(baseURL + "pokemon");
 	};
 
 	const getPokemon = async (name: string) => {
 		return await axios.get(baseURL + "pokemon/" + name);
-	};
-
-	const updateMyPokemon = async (name: string) => {
-		const poke = await getPokemon(name);
-		setMyPokemon(poke.data);
 	};
 
 	return (
@@ -37,23 +39,9 @@ function App() {
 				value={searchPokemon}
 				className="search-name"
 				onChange={(event) => setSearchPokemon(event.target.value)}
+				placeholder="Pesquise um pokemon"
 			/>
-			{pokemons
-				.filter(
-					(poke) => searchPokemon === "" || poke.name.includes(searchPokemon)
-				)
-				.map((poke: any) => {
-					return (
-						<>
-							<div
-								className="list-item"
-								onClick={() => updateMyPokemon(poke.name)}
-							>
-								{poke.name}
-							</div>
-						</>
-					);
-				})}
+			<Grid pokemons={pokemons || []} searchPokemon={searchPokemon}></Grid>
 		</div>
 	);
 }
